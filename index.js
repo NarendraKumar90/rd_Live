@@ -31,7 +31,7 @@ app.get("/", async (req, res) => {
 });
 //=============
 
-app.get('/rduserById/:rid', async (req, res) => {
+app.get('/rduserById', async (req, res) => {
     try {
         const { rid } = req.body;
 
@@ -58,7 +58,7 @@ app.get('/rduserById/:rid', async (req, res) => {
     }
 });
 
-app.get('/transactionById/:tid', async (req, res) => {
+app.get('/transactionById', async (req, res) => {
     try {
         const { tid } = req.body;
 
@@ -98,7 +98,7 @@ app.get('/rduser', async (req, res) => {
     }
 });
 
-app.get('/passbookById/:pid', async (req, res) => {
+app.get('/passbookById', async (req, res) => {
     try {
         const { pid } = req.body;
 
