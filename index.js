@@ -29,8 +29,348 @@ app.get("/", async (req, res) => {
    res.status(500).send(err.message);
  }
 });
+//=============
+//Rd get Api
 
-// get Api
+app.get('/rdusers', async (req, res) => {
+    try {
+        const result = await pool.query("SELECT * FROM rd_user ORDER BY rid DESC");
+        res.json({ rdusers: result.rows });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+//post Api
+app.post('/addrduser', async (req, res) => {
+    try {
+        const {
+            name,mob,address,dob,gender,rdamt,rddate,
+            occupation,acno,adharno,panno,nname,nadhar,npano,agree
+        } = req.body;
+
+        await pool.query(
+        `INSERT INTO rd_user
+        (name,mob,address,dob,gender,rdamt,rddate,occupation,
+        acno,adharno,panno,nname,nadhar,npano,agree)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+        [name,mob,address,dob,gender,rdamt,rddate,occupation,
+        acno,adharno,panno,nname,nadhar,npano,agree]);
+
+        res.send({status:"200",message:"User Saved Successfully"});
+    } catch(err){
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+//put
+
+app.put('/updaterduser', async(req,res)=>{
+    try{
+
+        const {
+            rid,name,mob,address,dob,gender,rdamt,rddate,
+            occupation,acno,adharno,panno,nname,nadhar,npano,agree
+        } = req.body;
+
+        await pool.query(
+        `UPDATE rd_user SET
+        name=$1,
+        mob=$2,
+        address=$3,
+        dob=$4,
+        gender=$5,
+        rdamt=$6,
+        rddate=$7,
+        occupation=$8,
+        acno=$9,
+        adharno=$10,
+        panno=$11,
+        nname=$12,
+        nadhar=$13,
+        npano=$14,
+        agree=$15
+        WHERE rid=$16`,
+        [name,mob,address,dob,gender,rdamt,rddate,occupation,
+        acno,adharno,panno,nname,nadhar,npano,agree,rid]);
+
+        res.send({status:"200",message:"Update Success"});
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+//Delete
+app.delete('/deleterduser', async(req,res)=>{
+    try{
+        [rid]=req.body;
+        await pool.query(
+            "DELETE FROM rd_user WHERE rid=$1",
+              [rid]          // [req.params.rid]
+        );
+
+        res.send({status:"200",message:"Delete Success"});
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+//rd Passbook
+
+app.get('/passbook', async(req,res)=>{
+    try{
+        const result=await pool.query(
+            "SELECT * FROM rd_passbook ORDER BY pid DESC"
+        );
+
+        res.json({passbook:result.rows});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+app.post('/addpassbook', async(req,res)=>{
+
+    try{
+
+        const{
+            rid,p_rdamt,p_rddate,
+            late_days,fine_amt,is_shtl
+        }=req.body;
+
+        await pool.query(
+        `INSERT INTO rd_passbook
+        (rid,p_rdamt,p_rddate,late_days,fine_amt,is_shtl)
+        VALUES($1,$2,$3,$4,$5,$6)`,
+        [rid,p_rdamt,p_rddate,late_days,fine_amt,is_shtl]);
+
+        res.send({status:"200",message:"Saved Successfully"});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//put
+
+app.put('/updatepassbook', async(req,res)=>{
+
+    try{
+
+        const{
+            pid,rid,p_rdamt,p_rddate,
+            late_days,fine_amt,is_shtl
+        }=req.body;
+
+        await pool.query(
+        `UPDATE rd_passbook SET
+        rid=$1,
+        p_rdamt=$2,
+        p_rddate=$3,
+        late_days=$4,
+        fine_amt=$5,
+        is_shtl=$6
+        WHERE pid=$7`,
+        [rid,p_rdamt,p_rddate,late_days,fine_amt,is_shtl,pid]);
+
+        res.send({status:"200",message:"Updated Successfully"});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//delete
+
+app.delete('/deletepassbook', async(req,res)=>{
+
+    try{
+         var {pid}=req.body
+        await pool.query(
+        "DELETE FROM rd_passbook WHERE pid=$1",
+        [pid]);
+
+        res.send({status:"200",message:"Delete Success"});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//transaction 
+
+app.get('/transactions', async(req,res)=>{
+
+    try{
+
+        const result=await pool.query(
+        "SELECT * FROM transactions ORDER BY tid DESC");
+
+        res.json({transactions:result.rows});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//post
+
+app.post('/addtransaction', async(req,res)=>{
+
+    try{
+
+        const{
+            user_id,due_date,
+            installment_amount,
+            paid_amount,
+            fine_amount,
+            status,
+            paid_date
+        }=req.body;
+
+        await pool.query(
+        `INSERT INTO transactions
+        (user_id,due_date,installment_amount,
+        paid_amount,fine_amount,status,paid_date)
+        VALUES($1,$2,$3,$4,$5,$6,$7)`,
+        [
+            user_id,
+            due_date,
+            installment_amount,
+            paid_amount,
+            fine_amount,
+            status,
+            paid_date
+        ]);
+
+        res.send({status:"200",message:"Saved Successfully"});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//update
+
+app.put('/updatetransaction', async(req,res)=>{
+
+    try{
+
+        const{
+            tid,
+            user_id,
+            due_date,
+            installment_amount,
+            paid_amount,
+            fine_amount,
+            status,
+            paid_date
+        }=req.body;
+
+        await pool.query(
+        `UPDATE transactions SET
+        user_id=$1,
+        due_date=$2,
+        installment_amount=$3,
+        paid_amount=$4,
+        fine_amount=$5,
+        status=$6,
+        paid_date=$7
+        WHERE tid=$8`,
+        [
+            user_id,
+            due_date,
+            installment_amount,
+            paid_amount,
+            fine_amount,
+            status,
+            paid_date,
+            tid
+        ]);
+
+        res.send({status:"200",message:"Updated Successfully"});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//Delete
+app.delete('/deletetransaction', async(req,res)=>{
+
+    try{
+         var {tid}=req.body
+        await pool.query(
+        "DELETE FROM transactions WHERE tid=$1",
+        [tid]);
+
+        res.send({status:"200",message:"Delete Success"});
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+
+});
+
+//Logins
+
+app.post('/logins', async (req, res) => {
+    try {
+
+        const { adharno, acno } = req.body;
+
+        const result = await pool.query(
+            `SELECT *
+             FROM rd_user
+             WHERE adharno = $1
+             AND acno = $2`,
+            [adharno, acno]
+        );
+
+        if (result.rows.length > 0) {
+            res.send({
+                status: "200",
+                message: "Login Success",
+                user: result.rows[0]
+            });
+        } else {
+            res.status(401).send({
+                status: "401",
+                message: "Invalid Aadhaar Number or Account Number"
+            });
+        }
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send({
+            status: "500",
+            message: "Server Error"
+        });
+    }
+});
+//========================================================
+
+
+//Menu get Api
 // API for select orders
 app.get('/orders', async (req, res) => {
     try {
