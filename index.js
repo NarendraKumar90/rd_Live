@@ -32,7 +32,7 @@ app.get("/", async (req, res) => {
 //=============
 //Rd get Api
 
-app.get('/rdusers', async (req, res) => {
+app.get('/rduser', async (req, res) => {
     try {
         const result = await pool.query("SELECT * FROM rd_user ORDER BY rid DESC");
         res.json({ rdusers: result.rows });
