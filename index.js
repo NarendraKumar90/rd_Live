@@ -30,6 +30,62 @@ app.get("/", async (req, res) => {
  }
 });
 //=============
+
+app.get('/rduserById/:rid', async (req, res) => {
+    try {
+        const { rid } = req.body;
+
+        const result = await pool.query(
+            "SELECT * FROM rd_user WHERE rid = $1",
+            [rid]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).send({
+                status: "404",
+                message: "User Not Found"
+            });
+        }
+
+        res.send({
+            status: "200",
+            rduser: result.rows[0]
+        });
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+app.get('/transactionById/:tid', async (req, res) => {
+    try {
+        const { tid } = req.body;
+
+        const result = await pool.query(
+            "SELECT * FROM transactions WHERE tid = $1",
+            [tid]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).send({
+                status: "404",
+                message: "Transaction Not Found"
+            });
+        }
+
+        res.send({
+            status: "200",
+            transaction: result.rows[0]
+        });
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+
 //Rd get Api
 
 app.get('/rduser', async (req, res) => {
@@ -39,6 +95,33 @@ app.get('/rduser', async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
+    }
+});
+
+app.get('/passbookById/:pid', async (req, res) => {
+    try {
+        const { pid } = req.body;
+
+        const result = await pool.query(
+            "SELECT * FROM rd_passbook WHERE pid = $1",
+            [pid]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).send({
+                status: "404",
+                message: "Passbook Record Not Found"
+            });
+        }
+
+        res.send({
+            status: "200",
+            passbook: result.rows[0]
+        });
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Server Error");
     }
 });
 
