@@ -58,6 +58,8 @@ app.get('/rduserById', async (req, res) => {
     }
 });
 
+
+
 app.get('/transactionById', async (req, res) => {
     try {
         const { tid } = req.body;
@@ -483,6 +485,36 @@ app.get('/orders', async (req, res) => {
 
 
 // API for select data
+app.get('/mwc', async (req, res) => {
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                mid,
+                mname,
+                price,
+                category
+            FROM menu
+            INNER JOIN food_cat
+            ON menu.fid = food_cat.fid
+            ORDER BY mid DESC
+        `);
+
+        res.status(200).json({
+            status: 200,
+            menu: result.rows
+        });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({
+            status: 500,
+            message: "Server Error"
+        });
+    }
+});
+
+
 app.get('/menu', async (req, res) => {
     try {
       console.log("Fetching data from menu table..."); // Log to check if the request is reaching here
