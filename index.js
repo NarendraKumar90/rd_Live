@@ -69,6 +69,34 @@ app.get("/rduserById/:rid", async (req, res) => {
     }
 });
 
+//total fine
+app.get("/totalfine", async (req, res) => {
+    try {
+
+        const result = await pool.query(
+            "SELECT COALESCE(SUM(fine_amount), 0) AS total_fine FROM transactions"
+        );
+
+        res.status(200).json({
+            status: 200,
+            success: true,
+            message: "Total Fine Amount",
+            data: Number(result.rows[0].total_fine)
+        });
+
+    } catch (err) {
+
+        console.error(err.message);
+
+        res.status(500).json({
+            status: 500,
+            success: false,
+            message: "Server Error"
+        });
+
+    }
+});
+
 
 
 app.get('/transactionById', async (req, res) => {
