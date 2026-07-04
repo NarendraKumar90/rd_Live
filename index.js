@@ -31,6 +31,47 @@ app.get("/", async (req, res) => {
 });
 //=============
 
+app.get("/tranById/:rid", async (req, res) => {
+    try {
+
+        const { rid } = req.params;
+
+        const result = await pool.query(
+            `SELECT *
+             FROM transactions
+             WHERE user_id = $1
+             ORDER BY tid DESC`,
+            [rid]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                status: 404,
+                success: false,
+                message: "No Transactions Found"
+            });
+        }
+
+        res.status(200).json({
+            status: 200,
+            success: true,
+            message: "Transactions fetched successfully",
+            data: result.rows
+        });
+
+    } catch (err) {
+
+        console.error(err.message);
+
+        res.status(500).json({
+            status: 500,
+            success: false,
+            message: "Server Error"
+        });
+
+    }
+});
+
 app.get("/rduserById/:rid", async (req, res) => {
     try {
 
