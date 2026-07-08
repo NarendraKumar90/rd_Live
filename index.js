@@ -1160,19 +1160,22 @@ app.get('/orders', async (req, res) => {
 
 
 // API for select data
+
 app.get('/mwc', async (req, res) => {
     try {
 
         const result = await pool.query(`
             SELECT
-                mid,
-                mname,
-                price,
-                category
+                menu.mid,
+                menu.mname,
+                menu.price,
+                food_cat.category,
+                menu.description,
+                menu.image
             FROM menu
             INNER JOIN food_cat
-            ON menu.fid = food_cat.fid
-            ORDER BY mid DESC
+                ON menu.fid = food_cat.fid
+            ORDER BY menu.mid DESC
         `);
 
         res.status(200).json({
@@ -1188,6 +1191,36 @@ app.get('/mwc', async (req, res) => {
         });
     }
 });
+
+
+// app.get('/mwc', async (req, res) => {
+//     try {
+
+//         const result = await pool.query(`
+//             SELECT
+//                 mid,
+//                 mname,
+//                 price,
+//                 category
+//             FROM menu
+//             INNER JOIN food_cat
+//             ON menu.fid = food_cat.fid
+//             ORDER BY mid DESC
+//         `);
+
+//         res.status(200).json({
+//             status: 200,
+//             menu: result.rows
+//         });
+
+//     } catch (err) {
+//         console.error(err.message);
+//         res.status(500).json({
+//             status: 500,
+//             message: "Server Error"
+//         });
+//     }
+// });
 
 
 app.get('/menu', async (req, res) => {
