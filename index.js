@@ -1289,27 +1289,51 @@ app.get('/qty',async(req,res)=>{
 
          // API for add data
            
-         app.post('/addmenu',async(req,res)=>{
-           try{
-            const{mname,price,fid,qid}=req.body
-            const result=await pool.query('INSERT INTO menu(mname,price,fid,qid) VALUES ($1,$2,$3,$4) RETURNING *',[mname,price,fid,qid]);
-            res.send({status:"200",menu:"save success"});
-           }catch(err){
-              console.error(err.message);
-              res.status(500).send('Server Error')
-           }
-            });
+         // app.post('/addmenu',async(req,res)=>{
+         //   try{
+         //    const{mname,price,fid,qid}=req.body
+         //    const result=await pool.query('INSERT INTO menu(mname,price,fid,qid) VALUES ($1,$2,$3,$4) RETURNING *',[mname,price,fid,qid]);
+         //    res.send({status:"200",menu:"save success"});
+         //   }catch(err){
+         //      console.error(err.message);
+         //      res.status(500).send('Server Error')
+         //   }
+         //    });
 
-              app.post('/addqty',async(req,res)=>{
-           try{
-            const{psize}=req.body
-            const result=await pool.query('INSERT INTO qty_mast(psize) VALUES ($1) RETURNING *',[psize]);
-            res.send({status:"200",menu:"save success"});
-           }catch(err){
-              console.error(err.message);
-              res.status(500).send('Server Error')
-           }
-            });
+         //      app.post('/addqty',async(req,res)=>{
+         //   try{
+         //    const{psize}=req.body
+         //    const result=await pool.query('INSERT INTO qty_mast(psize) VALUES ($1) RETURNING *',[psize]);
+         //    res.send({status:"200",menu:"save success"});
+         //   }catch(err){
+         //      console.error(err.message);
+         //      res.status(500).send('Server Error')
+         //   }
+         //    });
+
+app.post('/addmenu', async (req, res) => {
+  try {
+    const { mname, price, fid, qid, description, image } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO menu
+      (mname, price, fid, qid, description, image)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *`,
+      [mname, price, fid, qid, description, image]
+    );
+
+    res.status(200).json({
+      status: 200,
+      message: "Menu saved successfully",
+      data: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 
 
@@ -1382,24 +1406,55 @@ app.post('/addfood', async (req, res) => {
 
               // API for update data
            
-         app.put('/updatemenu',async(req,res)=>{
-            try{
-             const{mid,mname,price,fid,qid}=req.body;
-             const result=await pool.query(
-            'UPDATE menu SET mname=$1, price=$2, fid=$3, qid=$4 WHERE mid=$5 RETURNING *',
-            [mname,price,fid,qid,mid]);
+         // app.put('/updatemenu',async(req,res)=>{
+         //    try{
+         //     const{mid,mname,price,fid,qid}=req.body;
+         //     const result=await pool.query(
+         //    'UPDATE menu SET mname=$1, price=$2, fid=$3, qid=$4 WHERE mid=$5 RETURNING *',
+         //    [mname,price,fid,qid,mid]);
              
-              res.status(200).json({
-              status: 200,
-              message: "Update success",
-              data: result.rows[0]
-               });
+         //      res.status(200).json({
+         //      status: 200,
+         //      message: "Update success",
+         //      data: result.rows[0]
+         //       });
   
-            }catch(err){
-               console.error(err.message);
-               res.status(500).send('Server Error')
-            }
-             });
+         //    }catch(err){
+         //       console.error(err.message);
+         //       res.status(500).send('Server Error')
+         //    }
+         //     });
+
+app.put('/updatemenu', async (req, res) => {
+  try {
+    const {
+      mid, mname, price, fid, qid,  description,  image } = req.body;
+
+    const result = await pool.query(
+      `UPDATE menu
+       SET
+         mname = $1,
+         price = $2,
+         fid = $3,
+         qid = $4,
+         description = $5,
+         image = $6
+       WHERE mid = $7
+       RETURNING *`,
+      [mname, price, fid, qid, description, image, mid]
+    );
+
+    res.status(200).json({
+      status: 200,
+      message: "Update success",
+      data: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
          // UPDATE QYANTITY
 
